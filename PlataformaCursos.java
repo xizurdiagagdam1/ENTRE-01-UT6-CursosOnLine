@@ -83,7 +83,15 @@ public class PlataformaCursos
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        
+        Set<String> conjuntoClaves = plataforma.keySet();
+        Iterator<String> it = conjuntoClaves.iterator();
+        sb.append("Cursos on line ofrecidos por la plataforma");
+        while(it.hasNext()){
+            String clave = it.next();
+            sb.append(clave);
+            sb.append(plataforma.get(clave).toString());
+            sb.append("\n\n----------");
+        }
         return sb.toString();
     }
 
@@ -126,8 +134,18 @@ public class PlataformaCursos
      *  espacios antes y después de cada dato
      */
     private Curso obtenerCurso(String lineaCurso) {
-
-        return null;
+        lineaCurso.trim();
+        String[] datosCurso = lineaCurso.split(SEPARADOR);
+        ArrayList <String> devuelto = new ArrayList<>();
+        for(String dato: datosCurso){
+            devuelto.add(dato.trim());
+        }
+        
+        // DateTimeFormatter formateador = DateTimeFormatter.ofPattern("yyyy MMM dd");
+        // LocalDate fecha = LocalDate.parse(devuelto.get(1), formateador);
+        
+        Curso curso = new Curso(devuelto.get(0), fecha, Nivel.valueOf(devuelto.get(2)));
+        return curso;
     }
 
     /**
@@ -135,9 +153,10 @@ public class PlataformaCursos
      *  
      */
     public TreeSet<String> obtenerCategorias() {
-
-        return null;
-
+        TreeSet<String> categorias = new TreeSet<>();
+        Set<String> conjuntoClaves = plataforma.keySet();
+        categorias.addAll(conjuntoClaves);
+        return categorias;
     }
 
     /**
@@ -148,9 +167,9 @@ public class PlataformaCursos
      *  
      */
 
-    public      borrarCursosDe(String categoria, Nivel nivel) {
-
-        return null;
+    public TreeSet<String> borrarCursosDe(String categoria, Nivel nivel) {
+        TreeSet<String> cursosBorrados = new TreeSet<>();
+        return cursosBorrados;
     }
 
     /**
