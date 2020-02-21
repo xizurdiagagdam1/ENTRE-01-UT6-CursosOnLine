@@ -85,12 +85,13 @@ public class PlataformaCursos
         StringBuilder sb = new StringBuilder();
         Set<String> conjuntoClaves = plataforma.keySet();
         Iterator<String> it = conjuntoClaves.iterator();
-        sb.append("Cursos on line ofrecidos por la plataforma");
+        sb.append("Cursos on line ofrecidos por la plataforma\n\n");
         while(it.hasNext()){
             String clave = it.next();
-            sb.append(clave);
+            sb.append(clave).append(" (").append(totalCursosEn(clave)).append(")");
+            sb.append("\n");
             sb.append(plataforma.get(clave).toString());
-            sb.append("\n\n----------");
+            sb.append("\n\n----------\n");
         }
         return sb.toString();
     }
@@ -135,17 +136,17 @@ public class PlataformaCursos
      */
     private Curso obtenerCurso(String lineaCurso) {
         lineaCurso.trim();
-        String[] datosCurso = lineaCurso.split(SEPARADOR);
-        ArrayList <String> devuelto = new ArrayList<>();
-        for(String dato: datosCurso){
-            devuelto.add(dato.trim());
+        String[] aux = lineaCurso.split(SEPARADOR);
+        ArrayList<String> linea = new ArrayList<>();
+        for(String dato: aux){
+            linea.add(dato.trim());
         }
         
-        // DateTimeFormatter formateador = DateTimeFormatter.ofPattern("yyyy MMM dd");
-        // LocalDate fecha = LocalDate.parse(devuelto.get(1), formateador);
+        String[] fecha = linea.get(1).split("/");
         
-        Curso curso = new Curso(devuelto.get(0), fecha, Nivel.valueOf(devuelto.get(2)));
-        return curso;
+        LocalDate date = LocalDate.of(Integer.valueOf(fecha[2]), Integer.valueOf(fecha[1]), Integer.valueOf(fecha[0]));
+        
+        return new Curso(linea.get(0), date, Nivel.valueOf(linea.get(2).toUpperCase()));
     }
 
     /**
@@ -169,6 +170,18 @@ public class PlataformaCursos
 
     public TreeSet<String> borrarCursosDe(String categoria, Nivel nivel) {
         TreeSet<String> cursosBorrados = new TreeSet<>();
+        
+        ArrayList<Curso> cursos = plataforma.get(categoria.toUpperCase());
+        Iterator<Curso> it = cursos.iterator();
+        
+        while(it.hasNext()){
+            Curso curso = it.next();
+            if(curso.getNivel().equals(nivel)){
+                cursosBorrados.add(curso.getNombre());
+                it.remove();
+            }
+        }
+        
         return cursosBorrados;
     }
 
@@ -178,8 +191,29 @@ public class PlataformaCursos
      */
 
     public String cursoMasAntiguo() {
-
-        return "";
+        String devuelto = "";
+        
+        Set<String> categorias = plataforma.keySet();
+        Iterator<String> categoria = categorias.iterator();
+        
+        Curso cursoMasAntiguo = new Curso(" a ",
+                LocalDate.now(), Nivel.PRINCIPIANTE);
+        
+        while(categoria.hasNext()){
+            String nombreCategoria = categoria.next();
+            
+            ArrayList<Curso> cursos = plataforma.get(nombreCategoria.toUpperCase());
+            Iterator<Curso> it = cursos.iterator();
+            
+            while(it.hasNext()){
+                Curso curso = it.next();
+                if(curso.getFecha().compareTo(cursoMasAntiguo.getFecha()) < 0){
+                    cursoMasAntiguo = curso;
+                }
+            }
+        
+        }
+        return cursoMasAntiguo.getNombre();
     }
 
     /**
